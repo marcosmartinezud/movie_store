@@ -1,0 +1,23 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Directores - Movie Store{% endblock %}
+
+{% block content %}
+    <h1>Directores</h1>
+    
+    <div class="director-grid movie-grid">
+        {% for director in directors %}
+            <div class="card">
+                <h2>{{ director.name }}</h2>
+                {% if director.birth_date %}
+                    <p><strong>Fecha de nacimiento:</strong> {{ director.birth_date|date:"d/m/Y" }}</p>
+                {% endif %}
+                <p>{{ director.biography|truncatewords:50 }}</p>
+                <p><strong>Películas dirigidas:</strong> {{ director.movies.count }}</p>
+                <a href="{% url 'movies:director_detail' director.pk %}" class="button">Ver filmografía</a>
+            </div>
+        {% empty %}
+            <p>No hay directores disponibles.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

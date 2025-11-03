@@ -1,0 +1,36 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ director.name }} - Movie Store{% endblock %}
+
+{% block content %}
+    <h1>{{ director.name }}</h1>
+    
+    <div class="director-info">
+        {% if director.birth_date %}
+            <p><strong>Fecha de nacimiento:</strong> {{ director.birth_date|date:"d/m/Y" }}</p>
+        {% endif %}
+        
+        <h2>Biografía</h2>
+        <p>{{ director.biography }}</p>
+        
+        <h2>Filmografía</h2>
+        <div class="movie-grid">
+            {% for movie in director.movies.all %}
+                <div class="card">
+                    <h3>{{ movie.title }}</h3>
+                    {% if movie.poster %}
+                        <img src="{{ movie.poster }}" alt="{{ movie.title }}" style="max-width: 200px;">
+                    {% endif %}
+                    <p><strong>Año:</strong> {{ movie.release_year }}</p>
+                    <p><strong>Género:</strong> 
+                        <a href="{% url 'movies:genre_detail' movie.genre.pk %}">{{ movie.genre.name }}</a>
+                    </p>
+                    <p>{{ movie.description|truncatewords:30 }}</p>
+                    <a href="{% url 'movies:movie_detail' movie.pk %}" class="button">Ver detalles</a>
+                </div>
+            {% empty %}
+                <p>Este director aún no tiene películas registradas.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

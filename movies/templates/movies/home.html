@@ -1,0 +1,28 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Inicio - Movie Store{% endblock %}
+
+{% block content %}
+    <h1>Bienvenido a Movie Store</h1>
+    
+    <h2>Últimas películas por género</h2>
+    <div class="movie-grid">
+        {% for genre, movie in latest_movies.items %}
+            <div class="card">
+                <h3>{{ genre.name }}</h3>
+                {% if movie %}
+                    <h4>{{ movie.title }} ({{ movie.release_year }})</h4>
+                    {% if movie.poster %}
+                        <img src="{{ movie.poster }}" alt="{{ movie.title }}" style="max-width: 200px;">
+                    {% endif %}
+                    <p>{{ movie.description|truncatewords:30 }}</p>
+                    <a href="{% url 'movies:movie_detail' movie.pk %}">Ver detalles</a>
+                {% else %}
+                    <p>No hay películas en este género</p>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No hay géneros disponibles</p>
+        {% endfor %}
+    </div>
+{% endblock %}

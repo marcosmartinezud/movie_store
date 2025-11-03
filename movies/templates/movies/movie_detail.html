@@ -1,0 +1,36 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ movie.title }} - Movie Store{% endblock %}
+
+{% block content %}
+    <div class="movie-detail">
+        <h1>{{ movie.title }}</h1>
+        
+        <div class="movie-info">
+            {% if movie.poster %}
+                <img src="{{ movie.poster }}" alt="{{ movie.title }}" style="max-width: 300px; float: right; margin: 0 0 20px 20px;">
+            {% endif %}
+            
+            <p><strong>Año de lanzamiento:</strong> {{ movie.release_year }}</p>
+            
+            <p><strong>Género:</strong> 
+                <a href="{% url 'movies:genre_detail' movie.genre.pk %}">{{ movie.genre.name }}</a>
+            </p>
+            
+            <p><strong>Directores:</strong></p>
+            <ul>
+                {% for director in movie.directors.all %}
+                    <li>
+                        <a href="{% url 'movies:director_detail' director.pk %}">{{ director.name }}</a>
+                        {% if director.birth_date %}
+                            ({{ director.birth_date|date:"Y" }})
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            
+            <h2>Descripción</h2>
+            <p>{{ movie.description }}</p>
+        </div>
+    </div>
+{% endblock %}
