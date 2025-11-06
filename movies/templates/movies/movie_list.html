@@ -13,14 +13,15 @@
                     <img src="{{ movie.poster }}" alt="{{ movie.title }}" style="max-width: 200px;">
                 {% endif %}
                 <p><strong>Año:</strong> {{ movie.release_year }}</p>
-                <p><strong>Género:</strong> <a href="{% url 'movies:genre_detail' movie.genre.pk %}">{{ movie.genre.name }}</a></p>
+                <p><strong>Género:</strong> <a href="{% url 'movies:genre_detail' movie.genre.pk %}" class="tag">{{ movie.genre.name }}</a></p>
                 <p><strong>Directores:</strong>
                     {% for director in movie.directors.all %}
-                        <a href="{% url 'movies:director_detail' director.pk %}">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
+                        <a href="{% url 'movies:director_detail' director.pk %}" class="tag">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
                 <p>{{ movie.description|truncatewords:30 }}</p>
                 <a href="{% url 'movies:movie_detail' movie.pk %}" class="button">Ver detalles</a>
+
             </div>
         {% empty %}
             <p>No hay películas disponibles.</p>

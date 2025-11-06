@@ -20,7 +20,7 @@
                     <p><strong>Año:</strong> {{ movie.release_year }}</p>
                     <p><strong>Directores:</strong>
                         {% for director in movie.directors.all %}
-                            <a href="{% url 'movies:director_detail' director.pk %}">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
+                            <a href="{% url 'movies:director_detail' director.pk %}" class="tag">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
                         {% endfor %}
                     </p>
                     <p>{{ movie.description|truncatewords:30 }}</p>

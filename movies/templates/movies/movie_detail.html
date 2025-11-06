@@ -14,14 +14,14 @@
             <p><strong>Año de lanzamiento:</strong> {{ movie.release_year }}</p>
             
             <p><strong>Género:</strong> 
-                <a href="{% url 'movies:genre_detail' movie.genre.pk %}">{{ movie.genre.name }}</a>
+                <a href="{% url 'movies:genre_detail' movie.genre.pk %}" class="tag">{{ movie.genre.name }}</a>
             </p>
             
             <p><strong>Directores:</strong></p>
             <ul>
                 {% for director in movie.directors.all %}
                     <li>
-                        <a href="{% url 'movies:director_detail' director.pk %}">{{ director.name }}</a>
+                        <a href="{% url 'movies:director_detail' director.pk %}" class="tag">{{ director.name }}</a>
                         {% if director.birth_date %}
                             ({{ director.birth_date|date:"Y" }})
                         {% endif %}

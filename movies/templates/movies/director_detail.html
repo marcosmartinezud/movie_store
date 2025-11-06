@@ -23,7 +23,7 @@
                     {% endif %}
                     <p><strong>Año:</strong> {{ movie.release_year }}</p>
                     <p><strong>Género:</strong> 
-                        <a href="{% url 'movies:genre_detail' movie.genre.pk %}">{{ movie.genre.name }}</a>
+                        <a href="{% url 'movies:genre_detail' movie.genre.pk %}" class="tag">{{ movie.genre.name }}</a>
                     </p>
                     <p>{{ movie.description|truncatewords:30 }}</p>
                     <a href="{% url 'movies:movie_detail' movie.pk %}" class="button">Ver detalles</a>
