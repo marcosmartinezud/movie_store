@@ -132,4 +132,4 @@ for m in movies:
     )
     movie.directors.set(Director.objects.filter(name__in=m["directors"]))
 
-print("✅ Películas, géneros y directores cargados correctamente.")
+print("Películas, géneros y directores cargados correctamente.")
