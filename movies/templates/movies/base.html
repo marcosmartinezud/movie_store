@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Movie Store{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'movies/styles.css' %}">
+    <meta name="description" content="MovieStore: portal para explorar películas, géneros y directores.">
 </head>
 <body>
     <header>
-        <nav class="navbar">
+        <nav class="navbar" aria-label="Principal">
             <div class="container nav-container">
                 <div class="logo">
                     <a href="{% url 'movies:home' %}">MovieStore</a>
@@ -24,8 +25,7 @@
     </header>
 
     <main class="container">
-        {% block content %}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
 
     <footer>
@@ -44,8 +44,10 @@
             </div>
         </div>
         <div class="footer-bottom">
-            © {{ now|date:"Y" }} MovieStore. Todos los derechos reservados.
+            &copy; {% now "Y" %} MovieStore. Todos los derechos reservados.
         </div>
     </footer>
 </body>
 </html>
+
+

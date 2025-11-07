@@ -12,7 +12,9 @@
                 {% if director.birth_date %}
                     <p><strong>Fecha de nacimiento:</strong> {{ director.birth_date|date:"d/m/Y" }}</p>
                 {% endif %}
-                <p>{{ director.biography|truncatewords:50 }}</p>
+                {% if director.biography %}
+                    <p>{{ director.biography|truncatewords:50 }}</p>
+                {% endif %}
                 <p><strong>Películas dirigidas:</strong> {{ director.movies.count }}</p>
                 <a href="{% url 'movies:director_detail' director.pk %}" class="button">Ver filmografía</a>
             </div>
@@ -21,3 +23,4 @@
         {% endfor %}
     </div>
 {% endblock %}
+

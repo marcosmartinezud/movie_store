@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+  <defs>
+    <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#3bb34a"/>
+      <stop offset="100%" stop-color="#1f6f2a"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="900" fill="url(#g)"/>
+  <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="bold"
+        fill="#ffffff" stroke="#123" stroke-width="3">SHREK</text>
+  <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#e9ffe9">
+    Póster local de respaldo
+  </text>
+</svg>

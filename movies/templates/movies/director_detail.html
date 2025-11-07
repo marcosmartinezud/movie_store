@@ -10,8 +10,10 @@
             <p><strong>Fecha de nacimiento:</strong> {{ director.birth_date|date:"d/m/Y" }}</p>
         {% endif %}
         
-        <h2>Biografía</h2>
-        <p>{{ director.biography }}</p>
+        {% if director.biography %}
+            <h2>Biografía</h2>
+            <p>{{ director.biography }}</p>
+        {% endif %}
         
         <h2>Filmografía</h2>
         <div class="movie-grid">
@@ -22,7 +24,7 @@
                         <img src="{{ movie.poster }}" alt="{{ movie.title }}" style="max-width: 200px;">
                     {% endif %}
                     <p><strong>Año:</strong> {{ movie.release_year }}</p>
-                    <p><strong>Género:</strong> 
+                    <p><strong>Género:</strong>
                         <a href="{% url 'movies:genre_detail' movie.genre.pk %}" class="tag">{{ movie.genre.name }}</a>
                     </p>
                     <p>{{ movie.description|truncatewords:30 }}</p>
@@ -34,3 +36,4 @@
         </div>
     </div>
 {% endblock %}
+

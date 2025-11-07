@@ -5,29 +5,62 @@ Director.objects.all().delete()
 Genre.objects.all().delete()
 Movie.objects.all().delete()
 
-# === Géneros ===
+# Géneros
 genres = {
     "Acción": "Películas llenas de adrenalina y escenas de combate.",
     "Drama": "Historias centradas en el desarrollo emocional de los personajes.",
     "Ciencia Ficción": "Futuros imaginarios, tecnología avanzada y universos paralelos.",
     "Comedia": "Películas diseñadas para hacerte reír.",
-    "Suspense": "Historias con tensión y giros inesperados."
+    "Suspense": "Historias con tensión y giros inesperados.",
 }
 genre_objs = {name: Genre.objects.create(name=name, description=desc) for name, desc in genres.items()}
 
-# === Directores ===
+# Directores base
 directors = [
-    {"name": "Christopher Nolan", "biography": "Director británico conocido por películas complejas y visualmente impactantes.", "birth_date": "1970-07-30"},
-    {"name": "Quentin Tarantino", "biography": "Director estadounidense famoso por su estilo narrativo no lineal y diálogos únicos.", "birth_date": "1963-03-27"},
-    {"name": "Denis Villeneuve", "biography": "Director canadiense reconocido por su trabajo en ciencia ficción y thrillers psicológicos.", "birth_date": "1967-10-03"},
-    {"name": "Greta Gerwig", "biography": "Directora y actriz estadounidense, conocida por su estilo naturalista y narrativas femeninas.", "birth_date": "1983-08-04"},
-    {"name": "The Wachowskis", "biography": "Lana y Lilly Wachowski, directoras estadounidenses famosas por combinar acción, filosofía y ciencia ficción.", "birth_date": None},
-    {"name": "Edgar Wright", "biography": "Director británico con un estilo visual muy distintivo y ritmo de comedia dinámica.", "birth_date": "1974-04-18"},
-    {"name": "Bong Joon-ho", "biography": "Director surcoreano conocido por mezclar géneros y crítica social en sus películas.", "birth_date": "1969-09-14"},
+    {
+        "name": "Christopher Nolan",
+        "biography": "Director británico conocido por películas complejas y visualmente impactantes.",
+        "birth_date": "1970-07-30",
+    },
+    {
+        "name": "Quentin Tarantino",
+        "biography": "Director estadounidense famoso por su estilo narrativo no lineal y diálogos únicos.",
+        "birth_date": "1963-03-27",
+    },
+    {
+        "name": "Denis Villeneuve",
+        "biography": "Director canadiense reconocido por su trabajo en ciencia ficción y thrillers psicológicos.",
+        "birth_date": "1967-10-03",
+    },
+    {
+        "name": "Greta Gerwig",
+        "biography": "Directora y actriz estadounidense, conocida por su estilo naturalista y narrativas femeninas.",
+        "birth_date": "1983-08-04",
+    },
+    {
+        "name": "The Wachowskis",
+        "biography": "Lana y Lilly Wachowski, directoras estadounidenses famosas por combinar acción, filosofía y ciencia ficción.",
+        "birth_date": None,
+    },
+    {
+        "name": "Edgar Wright",
+        "biography": "Director británico con un estilo visual muy distintivo y ritmo de comedia dinámica.",
+        "birth_date": "1974-04-18",
+    },
+    {
+        "name": "Bong Joon-ho",
+        "biography": "Director surcoreano conocido por mezclar géneros y crítica social en sus películas.",
+        "birth_date": "1969-09-14",
+    },
 ]
-director_objs = [Director.objects.create(**d) for d in directors]
 
-# === Películas ===
+# Usar update_or_create para garantizar que se rellene la biografía/fecha
+for d in directors:
+    Director.objects.update_or_create(
+        name=d["name"], defaults={"biography": d["biography"], "birth_date": d["birth_date"]}
+    )
+
+# Películas
 movies = [
     {
         "title": "Inception",
@@ -111,15 +144,87 @@ movies = [
     },
 ]
 
-# Crear directores adicionales faltantes
+# Películas adicionales
+movies.extend(
+    [
+        {
+            "title": "Shrek",
+            "release_year": 2001,
+            "description": "Un ogro solitario emprende una aventura para rescatar a una princesa y recuperar la tranquilidad de su pantano.",
+            "poster": "https://m.media-amazon.com/images/I/81Hw13F3nSL._AC_UF894,1000_QL80_.jpg",
+            "genre": genre_objs["Comedia"],
+            "directors": ["Andrew Adamson", "Vicky Jenson"],
+        },
+        {
+            "title": "Fight Club",
+            "release_year": 1999,
+            "description": "Un oficinista insomne y un vendedor carismático forman un club de lucha clandestino que se sale de control.",
+            "poster": "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg",
+            "genre": genre_objs["Drama"],
+            "directors": ["David Fincher"],
+        },
+        {
+            "title": "Inglourious Basterds",
+            "release_year": 2009,
+            "description": "Un grupo de soldados aliados planea acabar con altos mandos nazis mientras una joven busca venganza en la Francia ocupada.",
+            "poster": "https://upload.wikimedia.org/wikipedia/en/c/c3/Inglourious_Basterds_poster.jpg",
+            "genre": genre_objs["Suspense"],
+            "directors": ["Quentin Tarantino"],
+        },
+        {
+            "title": "Casablanca",
+            "release_year": 1942,
+            "description": "En la ciudad marroquí de Casablanca, un cínico propietario de un club nocturno se enfrenta a un dilema cuando su antiguo amor reaparece junto a su esposo, un líder de la resistencia.",
+            "poster": "/static/movies/posters/casablanca.jpg",
+            "genre": genre_objs["Drama"],
+            "directors": ["Michael Curtiz"],
+        },
+    ]
+)
+
+# Directores adicionales (incluye los que faltaban con datos completos)
 extra_directors = {
-    "Chad Stahelski": {"name": "Chad Stahelski", "biography": "Director y doble de acción estadounidense, conocido por la saga John Wick.", "birth_date": "1968-09-20"},
-    "David Leitch": {"name": "David Leitch", "biography": "Director, productor y actor especializado en cine de acción.", "birth_date": "1975-11-16"},
-    "Rian Johnson": {"name": "Rian Johnson", "biography": "Director estadounidense conocido por su estilo original en películas de misterio y ciencia ficción.", "birth_date": "1973-12-17"},
+    "Chad Stahelski": {
+        "name": "Chad Stahelski",
+        "biography": "Director y doble de acción estadounidense, conocido por la saga John Wick.",
+        "birth_date": "1968-09-20",
+    },
+    "David Leitch": {
+        "name": "David Leitch",
+        "biography": "Director, productor y actor especializado en cine de acción.",
+        "birth_date": "1975-11-16",
+    },
+    "Rian Johnson": {
+        "name": "Rian Johnson",
+        "biography": "Director estadounidense conocido por su estilo original en películas de misterio y ciencia ficción.",
+        "birth_date": "1973-12-17",
+    },
+    "David Fincher": {
+        "name": "David Fincher",
+        "biography": "Director estadounidense conocido por thrillers como Seven y Fight Club.",
+        "birth_date": "1962-08-28",
+    },
+    "Andrew Adamson": {
+        "name": "Andrew Adamson",
+        "biography": "Director y guionista neozelandés, codirector de Shrek.",
+        "birth_date": "1966-12-01",
+    },
+    "Vicky Jenson": {
+        "name": "Vicky Jenson",
+        "biography": "Directora y artista estadounidense, codirectora de Shrek.",
+        "birth_date": "1960-03-04",
+    },
+    "Michael Curtiz": {
+        "name": "Michael Curtiz",
+        "biography": "Director estadounidense de origen húngaro, ganador del Óscar por Casablanca.",
+        "birth_date": "1886-12-24",
+    },
 }
 
 for d in extra_directors.values():
-    Director.objects.get_or_create(**d)
+    Director.objects.update_or_create(
+        name=d["name"], defaults={"biography": d["biography"], "birth_date": d["birth_date"]}
+    )
 
 # Crear películas
 for m in movies:
@@ -133,3 +238,4 @@ for m in movies:
     movie.directors.set(Director.objects.filter(name__in=m["directors"]))
 
 print("Películas, géneros y directores cargados correctamente.")
+
