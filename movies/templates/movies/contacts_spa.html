@@ -19,40 +19,40 @@
 
     <section class="panel">
         <h2>Nuevo contacto</h2>
-        <form @submit.prevent="createContact">
+        <form data-onsubmit="createContact" data-onsubmit-modifier="prevent">
             <label>
                 Nombre
-                <input v-model="form.name" placeholder="Nombre completo" required>
+                <input data-model="form.name" placeholder="Nombre completo" required>
             </label>
             <label>
                 Email
-                <input type="email" v-model="form.email" placeholder="correo@ejemplo.com" required>
+                <input type="email" data-model="form.email" placeholder="correo@ejemplo.com" required>
             </label>
             <label>
                 Teléfono
-                <input v-model="form.phone" placeholder="+34 600 000 000" required>
+                <input data-model="form.phone" placeholder="+34 600 000 000" required>
             </label>
-            <button class="button" type="submit" :disabled="loading">
+            <button class="button" type="submit" data-bind-disabled="loading">
                 {{ loading ? 'Guardando...' : 'Guardar contacto' }}
             </button>
         </form>
-        <p v-if="message" class="message" :class="messageType">{{ message }}</p>
+        <p data-if="message" class="message" data-bind-class="messageType">{{ message }}</p>
     </section>
 
     <section class="panel">
         <h2>Contactos existentes</h2>
-        <button class="ghost-button" @click="fetchContacts" :disabled="loading">Refrescar</button>
-        <p v-if="contacts.length === 0 && !loading" class="muted">No hay contactos aún.</p>
-        <div v-if="loading" class="muted">Cargando...</div>
-        <ul v-else class="contacts-list">
-            <li v-for="contact in contacts" :key="contact.id" class="contact-item">
+        <button class="ghost-button" data-onclick="fetchContacts" data-bind-disabled="loading">Refrescar</button>
+        <p data-if="contacts.length === 0 && !loading" class="muted">No hay contactos aún.</p>
+        <div data-if="loading" class="muted">Cargando...</div>
+        <ul data-else class="contacts-list">
+            <li data-for="contact in contacts" data-key="contact.id" class="contact-item">
                 <div>
                     <strong>{{ contact.name }}</strong>
                     <p>{{ contact.email }}</p>
                 </div>
                 <div class="contact-meta">
                     <span>{{ contact.phone }}</span>
-                    <button class="icon-button" @click="deleteContact(contact.id)">Eliminar</button>
+                    <button class="icon-button" data-onclick="deleteContact(contact.id)">Eliminar</button>
                 </div>
             </li>
         </ul>
