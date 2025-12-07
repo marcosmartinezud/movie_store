@@ -25,3 +25,12 @@ class Movie(models.Model):
     
     def __str__(self):
         return self.title
+
+
+class Contact(models.Model):
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
