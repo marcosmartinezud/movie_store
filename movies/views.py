@@ -1,8 +1,9 @@
 import json
 
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Contact, Director, Genre, Movie
 
@@ -36,6 +37,7 @@ def director_detail(request, pk):
     return render(request, 'movies/director_detail.html', {'director': director})
 
 
+@csrf_exempt
 @require_http_methods(['GET', 'POST'])
 def contact_api(request):
     if request.method == 'GET':
@@ -45,19 +47,20 @@ def contact_api(request):
     try:
         payload = json.loads(request.body.decode('utf-8') or '{}')
     except json.JSONDecodeError:
-        return HttpResponseBadRequest('Invalid JSON payload')
+        return JsonResponse({'error': 'Invalid JSON payload'}, status=400)
 
     name = payload.get('name')
     email = payload.get('email')
     phone = payload.get('phone')
 
     if not all([name, email, phone]):
-        return HttpResponseBadRequest('`name`, `email` and `phone` are required')
+        return JsonResponse({'error': '`name`, `email` and `phone` are required'}, status=400)
 
     contact = Contact.objects.create(name=name, email=email, phone=phone)
     return JsonResponse({'id': contact.id, 'name': contact.name, 'email': contact.email, 'phone': contact.phone}, status=201)
 
 
+@csrf_exempt
 @require_http_methods(['DELETE'])
 def contact_detail_api(request, pk):
     contact = get_object_or_404(Contact, pk=pk)
