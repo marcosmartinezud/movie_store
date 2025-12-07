@@ -1,5 +1,10 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Movie, Director, Genre
+import json
+
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_http_methods
+
+from .models import Contact, Director, Genre, Movie
 
 def home(request):
     genres = Genre.objects.all()
@@ -29,3 +34,32 @@ def director_list(request):
 def director_detail(request, pk):
     director = get_object_or_404(Director, pk=pk)
     return render(request, 'movies/director_detail.html', {'director': director})
+
+
+@require_http_methods(['GET', 'POST'])
+def contact_api(request):
+    if request.method == 'GET':
+        contacts = list(Contact.objects.all().values('id', 'name', 'email', 'phone'))
+        return JsonResponse(contacts, safe=False)
+
+    try:
+        payload = json.loads(request.body.decode('utf-8') or '{}')
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest('Invalid JSON payload')
+
+    name = payload.get('name')
+    email = payload.get('email')
+    phone = payload.get('phone')
+
+    if not all([name, email, phone]):
+        return HttpResponseBadRequest('`name`, `email` and `phone` are required')
+
+    contact = Contact.objects.create(name=name, email=email, phone=phone)
+    return JsonResponse({'id': contact.id, 'name': contact.name, 'email': contact.email, 'phone': contact.phone}, status=201)
+
+
+@require_http_methods(['DELETE'])
+def contact_detail_api(request, pk):
+    contact = get_object_or_404(Contact, pk=pk)
+    contact.delete()
+    return HttpResponse(status=204)

@@ -10,4 +10,6 @@ urlpatterns = [
     path('genres/<int:pk>/', views.genre_detail, name='genre_detail'),
     path('directors/', views.director_list, name='director_list'),
     path('directors/<int:pk>/', views.director_detail, name='director_detail'),
+    path('movies/api/contacts/', views.contact_api, name='contact_api'),
+    path('movies/api/contacts/<int:pk>/', views.contact_detail_api, name='contact_detail_api'),
 ]
