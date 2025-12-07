@@ -3,7 +3,8 @@ import json
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.http import require_http_methods, require_POST
 from django.views.generic import CreateView, DeleteView, DetailView, ListView
 
 from .models import Contact, Director, Genre, Movie
@@ -13,6 +14,11 @@ def home(request):
     genres = Genre.objects.all()
     latest_movies = {genre: genre.movies.last() for genre in genres}
     return render(request, 'movies/home.html', {'latest_movies': latest_movies})
+
+
+@ensure_csrf_cookie
+def contacts_spa(request):
+    return render(request, 'movies/contacts_spa.html')
 
 
 class MovieListView(ListView):
@@ -41,6 +47,14 @@ class MovieDeleteView(DeleteView):
     template_name = 'movies/movie_confirm_delete.html'
     context_object_name = 'movie'
     success_url = reverse_lazy('movies:movie_list')
+
+
+@csrf_exempt
+@require_POST
+def movie_delete_api(request, pk):
+    movie = get_object_or_404(Movie, pk=pk)
+    movie.delete()
+    return JsonResponse({'id': pk, 'deleted': True})
 
 def genre_list(request):
     genres = Genre.objects.all()
