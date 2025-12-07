@@ -3,7 +3,10 @@
 {% block title %}Películas - Movie Store{% endblock %}
 
 {% block content %}
-    <h1>Todas las Películas</h1>
+    <div class="list-header">
+        <h1>Todas las Películas</h1>
+        <a href="{% url 'movies:movie_create' %}" class="button">Agregar película</a>
+    </div>
     
     <div class="movie-grid">
         {% for movie in movies %}

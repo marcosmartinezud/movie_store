@@ -1,24 +1,46 @@
 import json
 
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import CreateView, DeleteView, DetailView, ListView
 
 from .models import Contact, Director, Genre, Movie
+
 
 def home(request):
     genres = Genre.objects.all()
     latest_movies = {genre: genre.movies.last() for genre in genres}
     return render(request, 'movies/home.html', {'latest_movies': latest_movies})
 
-def movie_list(request):
-    movies = Movie.objects.all()
-    return render(request, 'movies/movie_list.html', {'movies': movies})
 
-def movie_detail(request, pk):
-    movie = get_object_or_404(Movie, pk=pk)
-    return render(request, 'movies/movie_detail.html', {'movie': movie})
+class MovieListView(ListView):
+    model = Movie
+    template_name = 'movies/movie_list.html'
+    context_object_name = 'movies'
+
+
+class MovieDetailView(DetailView):
+    model = Movie
+    template_name = 'movies/movie_detail.html'
+    context_object_name = 'movie'
+
+
+class MovieCreateView(CreateView):
+    model = Movie
+    fields = ['title', 'release_year', 'description', 'poster', 'genre', 'directors']
+    template_name = 'movies/movie_form.html'
+
+    def get_success_url(self):
+        return reverse('movies:movie_detail', kwargs={'pk': self.object.pk})
+
+
+class MovieDeleteView(DeleteView):
+    model = Movie
+    template_name = 'movies/movie_confirm_delete.html'
+    context_object_name = 'movie'
+    success_url = reverse_lazy('movies:movie_list')
 
 def genre_list(request):
     genres = Genre.objects.all()
@@ -37,7 +59,6 @@ def director_detail(request, pk):
     return render(request, 'movies/director_detail.html', {'director': director})
 
 
-@csrf_exempt
 @require_http_methods(['GET', 'POST'])
 def contact_api(request):
     if request.method == 'GET':
@@ -47,20 +68,19 @@ def contact_api(request):
     try:
         payload = json.loads(request.body.decode('utf-8') or '{}')
     except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON payload'}, status=400)
+        return HttpResponseBadRequest('Invalid JSON payload')
 
     name = payload.get('name')
     email = payload.get('email')
     phone = payload.get('phone')
 
     if not all([name, email, phone]):
-        return JsonResponse({'error': '`name`, `email` and `phone` are required'}, status=400)
+        return HttpResponseBadRequest('`name`, `email` and `phone` are required')
 
     contact = Contact.objects.create(name=name, email=email, phone=phone)
     return JsonResponse({'id': contact.id, 'name': contact.name, 'email': contact.email, 'phone': contact.phone}, status=201)
 
 
-@csrf_exempt
 @require_http_methods(['DELETE'])
 def contact_detail_api(request, pk):
     contact = get_object_or_404(Contact, pk=pk)

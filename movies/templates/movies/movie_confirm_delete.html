@@ -1,0 +1,13 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Eliminar película - Movie Store{% endblock %}
+
+{% block content %}
+    <h1>Eliminar película</h1>
+    <p>¿Estás seguro de que deseas eliminar "{{ movie.title }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button danger">Eliminar</button>
+        <a href="{% url 'movies:movie_detail' movie.pk %}" class="button">Cancelar</a>
+    </form>
+{% endblock %}
