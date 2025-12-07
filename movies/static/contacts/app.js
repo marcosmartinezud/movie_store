@@ -25,36 +25,43 @@ function transformDataAttributes(root) {
             el.setAttribute('v-else', '');
             el.removeAttribute('data-else');
         }
-        // v-for and :key
+        // v-for and v-bind:key
         if (el.hasAttribute('data-for')) {
             el.setAttribute('v-for', el.getAttribute('data-for'));
             el.removeAttribute('data-for');
         }
         if (el.hasAttribute('data-key')) {
-            el.setAttribute(':key', el.getAttribute('data-key'));
+            el.setAttribute('v-bind:key', el.getAttribute('data-key'));
             el.removeAttribute('data-key');
         }
-        // @click
+        // v-on:click
         if (el.hasAttribute('data-onclick')) {
-            el.setAttribute('@click', el.getAttribute('data-onclick'));
+            el.setAttribute('v-on:click', el.getAttribute('data-onclick'));
             el.removeAttribute('data-onclick');
         }
         // @submit with optional modifier 'prevent'
         if (el.hasAttribute('data-onsubmit')) {
             const handler = el.getAttribute('data-onsubmit');
             const mod = el.getAttribute('data-onsubmit-modifier');
-            const attr = mod === 'prevent' ? `@submit.prevent` : `@submit`;
-            el.setAttribute(attr, handler);
+            // Can't set attribute names with a dot ('.') in the DOM
+            // so set a normal @submit and, when 'prevent' is requested,
+            // use an inline expression that calls $event.preventDefault()
+            // before invoking the handler.
+            if (mod === 'prevent') {
+                el.setAttribute('v-on:submit', "$event.preventDefault(); " + handler + "()");
+            } else {
+                el.setAttribute('v-on:submit', handler);
+            }
             el.removeAttribute('data-onsubmit');
             if (mod) el.removeAttribute('data-onsubmit-modifier');
         }
-        // :disabled and :class
+        // v-bind:disabled and v-bind:class
         if (el.hasAttribute('data-bind-disabled')) {
-            el.setAttribute(':disabled', el.getAttribute('data-bind-disabled'));
+            el.setAttribute('v-bind:disabled', el.getAttribute('data-bind-disabled'));
             el.removeAttribute('data-bind-disabled');
         }
         if (el.hasAttribute('data-bind-class')) {
-            el.setAttribute(':class', el.getAttribute('data-bind-class'));
+            el.setAttribute('v-bind:class', el.getAttribute('data-bind-class'));
             el.removeAttribute('data-bind-class');
         }
     });
