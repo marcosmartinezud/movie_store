@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods, require_POST
-from django.views.generic import CreateView, DeleteView, DetailView, ListView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from .models import Contact, Director, Genre, Movie
 
@@ -54,6 +54,15 @@ def movie_delete_api(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
     movie.delete()
     return JsonResponse({'id': pk, 'deleted': True})
+
+
+class MovieUpdateView(UpdateView):
+    model = Movie
+    fields = ['title', 'release_year', 'description', 'poster', 'genre', 'directors']
+    template_name = 'movies/movie_form.html'
+
+    def get_success_url(self):
+        return reverse('movies:movie_detail', kwargs={'pk': self.object.pk})
 
 def genre_list(request):
     genres = Genre.objects.all()
