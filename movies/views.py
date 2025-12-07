@@ -49,7 +49,6 @@ class MovieDeleteView(DeleteView):
     success_url = reverse_lazy('movies:movie_list')
 
 
-@csrf_exempt
 @require_POST
 def movie_delete_api(request, pk):
     movie = get_object_or_404(Movie, pk=pk)

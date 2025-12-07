@@ -1,8 +1,10 @@
 const { createApp } = Vue;
 
 function getCookie(name) {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? decodeURIComponent(match[2]) : null;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return '';
 }
 
 createApp({
@@ -16,7 +18,8 @@ createApp({
             },
             loading: false,
             message: '',
-            messageType: ''
+            messageType: '',
+            csrfToken: getCookie('csrftoken')
         };
     },
     created() {
@@ -28,6 +31,7 @@ createApp({
             this.message = '';
             try {
                 const response = await fetch('/movies/api/contacts/', {
+                    headers: this.buildHeaders(),
                     credentials: 'same-origin'
                 });
                 if (!response.ok) throw new Error('No se pudieron cargar los contactos');
@@ -40,22 +44,25 @@ createApp({
             }
         },
         async createContact() {
+            if (!this.csrfToken) this.csrfToken = getCookie('csrftoken');
+            if (!this.csrfToken) {
+                this.message = 'Token CSRF no disponible';
+                this.messageType = 'error';
+                return;
+            }
+
             this.loading = true;
             this.message = '';
             try {
                 const response = await fetch('/movies/api/contacts/', {
                     method: 'POST',
+                    headers: this.buildHeaders(true),
                     credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
                     body: JSON.stringify(this.form)
                 });
                 if (!response.ok) {
-                    const json = await response.json().catch(() => null);
-                    const detail = json?.error || json?.detail || 'Error al crear';
-                    throw new Error(detail);
+                    const text = await response.text();
+                    throw new Error(text || 'Error al crear');
                 }
                 this.message = 'Contacto guardado';
                 this.messageType = 'success';
@@ -70,15 +77,20 @@ createApp({
         },
         async deleteContact(id) {
             if (!confirm('¿Eliminar este contacto?')) return;
+            if (!this.csrfToken) this.csrfToken = getCookie('csrftoken');
+            if (!this.csrfToken) {
+                this.message = 'Token CSRF no disponible';
+                this.messageType = 'error';
+                return;
+            }
+
             this.loading = true;
             this.message = '';
             try {
                 const response = await fetch(`/movies/api/contacts/${id}/`, {
                     method: 'DELETE',
-                    credentials: 'same-origin',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
-                    }
+                    headers: this.buildHeaders(),
+                    credentials: 'same-origin'
                 });
                 if (!response.ok) throw new Error('No se pudo eliminar');
                 this.message = 'Contacto eliminado';
@@ -90,6 +102,16 @@ createApp({
             } finally {
                 this.loading = false;
             }
+        },
+        buildHeaders(includeJson = false) {
+            const headers = {};
+            if (this.csrfToken) {
+                headers['X-CSRFToken'] = this.csrfToken;
+            }
+            if (includeJson) {
+                headers['Content-Type'] = 'application/json';
+            }
+            return headers;
         }
     }
 }).mount('#app');
