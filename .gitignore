@@ -5,5 +5,7 @@
 /venv
 /build
 
-instructions.txt
+/E4a/db.sqlite3
+/E4a/venv
 
+instructions.txt

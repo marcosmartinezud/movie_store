@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieStore Contacts SPA</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+        "vue-demi": "https://unpkg.com/vue-demi@0.14.10/lib/index.mjs",
+        "firebase/app": "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js",
+        "firebase/database": "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js",
+        "firebase/storage": "https://www.gstatic.com/firebasejs/11.3.1/firebase-storage.js",
+        "firebase/app-check": "https://www.gstatic.com/firebasejs/11.3.1/firebase-app-check.js"
+      }
+    }
+    </script>
+    <script>
+      // Vuefire y dependencias esperan process.env.NODE_ENV; lo definimos en el navegador.
+      window.process = window.process || { env: { NODE_ENV: 'production' } };
+    </script>
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+<div id="app" class="app-shell">
+    <header>
+        <h1>E4b SPA con FIREBASE</h1>
+    </header>
+
+    <section class="panel">
+        <h2>Nuevo contacto</h2>
+        <!-- Formulario controlado por Vue para crear un contacto -->
+        <form data-onsubmit="createContact" data-onsubmit-modifier="prevent">
+            <label>
+                Nombre
+                <input data-model="form.name" placeholder="Nombre completo" required>
+            </label>
+            <label>
+                Email
+                <input type="email" data-model="form.email" placeholder="correo@ejemplo.com" required>
+            </label>
+            <label>
+                Teléfono
+                <input data-model="form.phone" placeholder="+34 600 000 000" required>
+            </label>
+            <button class="button" type="submit" data-bind-disabled="loading">
+                {{ loading ? 'Guardando...' : 'Guardar contacto' }}
+            </button>
+        </form>
+        <p data-if="message" class="message" data-bind-class="messageType">{{ message }}</p>
+    </section>
+
+    <section class="panel">
+        <h2>Contactos existentes</h2>
+        <button class="ghost-button" data-onclick="fetchContacts" data-bind-disabled="loading">Refrescar</button>
+        <p data-if="contacts.length === 0 && !loading" class="muted">No hay contactos aún.</p>
+        <div data-if="loading" class="muted">Cargando...</div>
+        <!-- Lista reactiva ligada a la coleccion de Firestore -->
+        <ul data-else class="contacts-list">
+            <li data-for="contact in contacts" data-key="contact.id" class="contact-item">
+                <div>
+                    <strong>{{ contact.name }}</strong>
+                    <p>{{ contact.email }}</p>
+                </div>
+                <div class="contact-meta">
+                    <span>{{ contact.phone }}</span>
+                    <button class="icon-button" data-onclick="deleteContact(contact.id)">Eliminar</button>
+                </div>
+            </li>
+        </ul>
+    </section>
+</div>
+</body>
+</html>

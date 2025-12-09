@@ -1,0 +1,58 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ form.instance.pk|yesno:"Editar película,Agregar película" }} - Movie Store{% endblock %}
+
+{% block content %}
+<div class="form-shell">
+    <div class="form-header">
+        <p class="eyebrow">Gestión de catálogo</p>
+        <h1>{{ form.instance.pk|yesno:"Editar película,Agregar película" }}</h1>
+        <p class="muted-text">Completa los datos para añadir una nueva película o ajustar una existente.</p>
+    </div>
+
+    <!-- Formulario reutilizado para crear o editar una pelicula -->
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="{{ form.title.id_for_label }}">Título</label>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </div>
+            <div class="form-field">
+                <label for="{{ form.release_year.id_for_label }}">Año de estreno</label>
+                {{ form.release_year }}
+                {{ form.release_year.errors }}
+            </div>
+            <div class="form-field full-width">
+                <label for="{{ form.description.id_for_label }}">Descripción</label>
+                {{ form.description }}
+                {{ form.description.errors }}
+            </div>
+            <div class="form-field">
+                <label for="{{ form.poster.id_for_label }}">Poster (URL)</label>
+                {{ form.poster }}
+                {{ form.poster.errors }}
+            </div>
+            <div class="form-field">
+                <label for="{{ form.genre.id_for_label }}">Género</label>
+                <div class="select-wrapper">{{ form.genre }}</div>
+                {{ form.genre.errors }}
+            </div>
+            <div class="form-field full-width">
+                <label for="{{ form.directors.id_for_label }}">Directores</label>
+                <div class="checkbox-grid">
+                    {{ form.directors }}
+                </div>
+                <p class="helper-text">Puedes seleccionar uno o varios directores.</p>
+                {{ form.directors.errors }}
+            </div>
+        </div>
+        <div class="form-actions">
+            <a href="{% url 'movies:movie_list' %}" class="button ghost">Cancelar</a>
+            <button type="submit" class="button">{{ form.instance.pk|yesno:"Guardar cambios,Crear película" }}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
